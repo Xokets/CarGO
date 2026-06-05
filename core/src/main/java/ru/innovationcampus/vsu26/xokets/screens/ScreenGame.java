@@ -168,10 +168,6 @@ public class ScreenGame extends ScreenAdapter {
         bitmapFont.draw(cargoGame.batch(), "Point " + point, 0, Settings.WORLD_HEIGHT - 1);
         cargoGame.assetsManager().commonWhiteFont().getData().setScale(0.023f);
         cargoGame.batch().end();
-        cargoGame.box2DDebugRenderer.render(
-            cargoGame.world(),
-            cargoGame.camera().combined
-        );
     }
 
     @Override
