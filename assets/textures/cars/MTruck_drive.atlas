@@ -1,0 +1,20 @@
+
+MTruck_drive.png
+size: 1024, 512
+format: RGBA8888
+filter: Nearest, Nearest
+repeat: none
+Drive
+  rotate: false
+  xy: 2, 2
+  size: 358, 388
+  orig: 358, 388
+  offset: 0, 0
+  index: 1
+Drive
+  rotate: false
+  xy: 362, 2
+  size: 358, 388
+  orig: 358, 388
+  offset: 0, 0
+  index: 2
