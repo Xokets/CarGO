@@ -37,7 +37,10 @@ public class CargoObject extends GameObject implements Animated {
     }
 
     public boolean isInBody(Vector2 bodyPos, float width, float height) {
-        return getY() + height / 2f >= bodyPos.y - height / 4f;
+        return getY() + this.height / 2f >= bodyPos.y - height / 2f &&
+            getY() - this.height / 2f <= bodyPos.y + height / 2f &&
+            getX() + this.width / 2f >= bodyPos.x - width / 2f &&
+            getX() - this.width / 2f <= bodyPos.x + width / 2f;
     }
 
     public void drop() {

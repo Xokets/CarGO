@@ -14,6 +14,6 @@ public class Interactive extends UI {
     public boolean isTouch(@Nullable Vector3 touch) {
         if (touch == null) return false;
 
-        return touch.x >= x && touch.x <= x + width && touch.y >= y && touch.y <= y + height;
+        return touch.x >= x - width / 2f && touch.x <= x + width / 2f && touch.y >= y - height / 2f && touch.y <= y + height / 2f;
     }
 }

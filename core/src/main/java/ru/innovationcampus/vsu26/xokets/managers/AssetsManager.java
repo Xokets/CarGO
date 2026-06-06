@@ -28,6 +28,7 @@ public class AssetsManager implements Disposable {
     private Texture blackoutFullTexture;
 
     private BitmapFont commonWhiteFont;
+    private BitmapFont commonBlackFont;
 
     public AssetsManager() {
         barrelTexture = new Texture(Resources.BARREL_ITP);
@@ -48,6 +49,7 @@ public class AssetsManager implements Disposable {
         cargoLostAnimation = new Animation<>(0.1f, cargoLostAtlas.findRegions("Lost"));
 
         commonWhiteFont = Utils.generateFont(64, Color.WHITE, Resources.COMMON_IFP);
+        commonBlackFont = Utils.generateFont(64, Color.BLACK, Resources.COMMON_IFP);
     }
 
     @Override
@@ -62,6 +64,7 @@ public class AssetsManager implements Disposable {
         cargoLostAtlas.dispose();
         barrelTexture.dispose();
         commonWhiteFont.dispose();
+        commonBlackFont.dispose();
         textButtonBGTexture.dispose();
     }
 
@@ -110,5 +113,9 @@ public class AssetsManager implements Disposable {
 
     public Texture textButtonBGTexture() {
         return textButtonBGTexture;
+    }
+
+    public BitmapFont commonBlackFont() {
+        return commonBlackFont;
     }
 }

@@ -22,4 +22,28 @@ public abstract class UI {
     public void draw(Batch batch) {
         batch.draw(texture, x - width / 2f, y - height / 2f, width, height);
     }
+
+    public float getY() {
+        return y;
+    }
+
+    public void setY(float y) {
+        this.y = y;
+    }
+
+    public float getX() {
+        return x;
+    }
+
+    public void setX(float x) {
+        this.x = x;
+    }
+
+    public float getWidth() {
+        return width;
+    }
+
+    public float getHeight() {
+        return height;
+    }
 }

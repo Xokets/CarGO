@@ -9,10 +9,12 @@ public class Settings {
     public static final int POSITION_ITERATIONS = 6;
     public static final int WORLD_WIDTH = 9;
     public static final int WORLD_HEIGHT = 16;
+    public static final int UI_WORLD_WIDTH = 720;
+    public static final int UI_WORLD_HEIGHT = 1280;
     public static final int TRUCK_WIDTH = 2;
     public static final int TRUCK_HEIGHT = 3;
-    public static final float TEXT_BUTTON_WIDTH = 5f;
-    public static final float TEXT_BUTTON_HEIGHT = 2.5f;
+    public static final int TEXT_BUTTON_WIDTH = 400;
+    public static final int TEXT_BUTTON_HEIGHT = 200;
     public static final float MILLITARY_TRUCK_WIDTH = 2.8f;
     public static final float MILLITARY_TRUCK_HEIGHT = 3.3f;
     public static final long MILLITARY_TRUCK_SHOOTING_COOL_DOWN = 1000;

@@ -29,9 +29,8 @@ public abstract class GameObject {
         body = createBody(x, y, shape, world);
     }
     public boolean isInWorld() {
-        float hw = width / 2f;
         float hh = height / 2f;
-        return (getX() - hw >= 0 || getX() + hw <= Settings.WORLD_WIDTH) || (getY() - hh >= 0 || getY() + hh <= Settings.WORLD_HEIGHT);
+        return getY() + hh >= 0 && getY() - hh <= Settings.WORLD_HEIGHT;
     }
 
     public void draw(Batch batch) {

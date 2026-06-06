@@ -30,8 +30,9 @@ import ru.innovationcampus.vsu26.xokets.managers.AssetsManager;
 import ru.innovationcampus.vsu26.xokets.ui.Button;
 import ru.innovationcampus.vsu26.xokets.ui.Image;
 import ru.innovationcampus.vsu26.xokets.ui.MovingBackground;
+import ru.innovationcampus.vsu26.xokets.ui.TextUI;
 
-public class ScreenGame extends ScreenAdapter {
+public class ScreenGame extends MyScreen {
     private final ArrayList<BulletObject> bulletArray = new ArrayList<>();
     private final ArrayList<CargoObject> cargoArray = new ArrayList<>();
     private final ArrayList<BarrelObject> barrelArray = new ArrayList<>();
@@ -39,18 +40,20 @@ public class ScreenGame extends ScreenAdapter {
     private GameSession gameSession;
     private boolean isGameOver;
     private int point;
-    private final CargoGame cargoGame;
     private TruckObject truck;
     private ShootingCarObject millitaryTruck;
     private Image blackoutFull;
     private Button menuButton;
+    private TextUI pointsTextUI;
 
     public ScreenGame(CargoGame cargoGame) {
-        this.cargoGame = cargoGame;
+        super(cargoGame);
     }
 
     @Override
     public void show() {
+        touch = null;
+        uiTouch = null;
         point = 0;
         isGameOver = false;
 
@@ -130,8 +133,8 @@ public class ScreenGame extends ScreenAdapter {
         gameSession = new GameSession();
         menuButton = new Button(
 
-            Settings.WORLD_WIDTH / 2f,
-            Settings.WORLD_HEIGHT / 2f,
+            Settings.UI_WORLD_WIDTH / 2f,
+            Settings.UI_WORLD_HEIGHT / 2f,
             Settings.TEXT_BUTTON_WIDTH,
             Settings.TEXT_BUTTON_HEIGHT,
             cargoGame.assetsManager().textButtonBGTexture(),
@@ -139,16 +142,20 @@ public class ScreenGame extends ScreenAdapter {
             cargoGame.assetsManager().commonWhiteFont()
 
             );
+
+        pointsTextUI = new TextUI(0, 0, cargoGame.assetsManager().commonWhiteFont(), "points: 0");
+        pointsTextUI.setX(pointsTextUI.getWidth() / 2f);
+        pointsTextUI.setY(Settings.UI_WORLD_HEIGHT - pointsTextUI.getHeight() / 2f);
     }
 
     @Override
     public void render(float delta) {
+        handleInput();
         if (!isGameOver) {
             updateObjects(delta);
             cleanObjects();
             cargoGame.stepWorld(delta);
         }
-        handleInput();
         cargoGame.camera().update();
         ScreenUtils.clear(Color.BLACK);
         cargoGame.batch().setProjectionMatrix(cargoGame.camera().combined);
@@ -161,18 +168,23 @@ public class ScreenGame extends ScreenAdapter {
         for (BarrelObject barrel : barrelArray) barrel.draw(cargoGame.batch());
         if (isGameOver) {
             blackoutFull.draw(cargoGame.batch());
+        }
+        cargoGame.batch().end();
+
+        cargoGame.uiViewport().getCamera().update();
+        cargoGame.batch().setProjectionMatrix(cargoGame.uiViewport().getCamera().combined);
+        cargoGame.batch().begin();
+        pointsTextUI.draw(cargoGame.batch());
+        if (isGameOver) {
             menuButton.draw(cargoGame.batch());
         }
-        BitmapFont bitmapFont = new BitmapFont();
-        bitmapFont.getData().setScale(0.1f);
-        bitmapFont.draw(cargoGame.batch(), "Point " + point, 0, Settings.WORLD_HEIGHT - 1);
-        cargoGame.assetsManager().commonWhiteFont().getData().setScale(0.023f);
         cargoGame.batch().end();
     }
 
     @Override
     public void resize(int width, int height) {
         cargoGame.viewport().update(width, height, true);
+        cargoGame.uiViewport().update(width, height, true);
     }
 
     @Override
@@ -181,14 +193,21 @@ public class ScreenGame extends ScreenAdapter {
 
     private void handleInput() {
         if (Gdx.input.isTouched()) {
-            cargoGame.setTouch(Utils.getCorrectTouch(cargoGame.viewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)));
+            touch = Utils.getCorrectTouch(cargoGame.viewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+            if (touch.x > Settings.WORLD_WIDTH || touch.x < 0) touch = null;
+            uiTouch = Utils.getCorrectTouch(cargoGame.uiViewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
         }
         if (isGameOver) {
             if (Gdx.input.justTouched()) {
-                cargoGame.setTouch(Utils.getCorrectTouch(cargoGame.viewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0)));
+                touch = Utils.getCorrectTouch(cargoGame.viewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
+                uiTouch = Utils.getCorrectTouch(cargoGame.uiViewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
             }
 
-            if (menuButton.isTouch(cargoGame.getTouch())) cargoGame.setScreen(cargoGame.screenMenu());
+            if (menuButton.isTouch(uiTouch)) {
+                deleteObjects();
+                cargoGame.memoryManager().addRecord(point);
+                cargoGame.setScreen(cargoGame.screenMenu());
+            }
         }
     }
 
@@ -196,22 +215,22 @@ public class ScreenGame extends ScreenAdapter {
         gameSession.update(delta);
 
         truck.setY(Settings.WORLD_HEIGHT / 2f);
-        truck.move(cargoGame.getTouch());
+        truck.move(touch);
         truck.updateAnimationStateTime(delta);
-        if (cargoArray.size() > 0) {
+        if (!cargoArray.isEmpty()) {
             if (truck.checkHit()) cargoArray.get(ThreadLocalRandom.current().nextInt(cargoArray.size())).drop();
         } else {
             isGameOver = true;
-            cargoGame.setTouch(null);
+            uiTouch = null;
         }
 
 
         if (truck.putInWorld()) {
-            cargoGame.setTouch(null);
+            touch = null;
         }
         if (millitaryTruck != null) {
             millitaryTruck.setY(Settings.MILLITARY_TRUCK_HEIGHT / 6f);
-            millitaryTruck.move(cargoGame.getTouch(), 2);
+            millitaryTruck.move(touch, 2);
             millitaryTruck.updateAnimationStateTime(delta);
 
             millitaryTruck.putInWorld();
@@ -280,6 +299,8 @@ public class ScreenGame extends ScreenAdapter {
             roadBackground.move();
             cargoGame.accumulator -= Settings.FIXED_TIME_STEP;
         }
+
+        pointsTextUI.setText("points: " + point);
     }
 
     public void cleanObjects() {
@@ -305,5 +326,10 @@ public class ScreenGame extends ScreenAdapter {
             cargoGame.world().destroyBody(cargoArray.get(i).getBody());
             cargoArray.remove(i--);
         }
+    }
+
+    private void deleteObjects() {
+        cargoGame.world().destroyBody(truck.getBody());
+        if (millitaryTruck != null) cargoGame.world().destroyBody(millitaryTruck.getBody());
     }
 }

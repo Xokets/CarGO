@@ -19,6 +19,7 @@ import java.util.Set;
 
 import ru.innovationcampus.vsu26.xokets.managers.AssetsManager;
 import ru.innovationcampus.vsu26.xokets.managers.ContactManager;
+import ru.innovationcampus.vsu26.xokets.managers.MemoryManager;
 import ru.innovationcampus.vsu26.xokets.screens.ScreenGame;
 import ru.innovationcampus.vsu26.xokets.screens.ScreenMenu;
 
@@ -29,26 +30,32 @@ public class CargoGame extends Game {
     private OrthographicCamera camera;
     private World world;
     private FitViewport viewport;
+    private FitViewport uiViewport;
     private Screen screenGame;
     private Screen screenMenu;
-    private Vector3 touch;
     private AssetsManager assetsManager;
+    private MemoryManager memoryManager;
     private ContactManager contactManager;
     public Box2DDebugRenderer box2DDebugRenderer;
 
     @Override
     public void create() {
         Box2D.init();
-        assetsManager = new AssetsManager();
         screenMenu = new ScreenMenu(this);
         screenGame = new ScreenGame(this);
+
         world = new World(new Vector2(0, 0), false);
         batch = new SpriteBatch();
-        contactManager = new ContactManager(world);
         camera = new OrthographicCamera();
-        viewport = new FitViewport(9f, 16f, camera);
+        viewport = new FitViewport(Settings.WORLD_WIDTH, Settings.WORLD_HEIGHT, camera);
+        uiViewport = new FitViewport(Settings.UI_WORLD_WIDTH, Settings.UI_WORLD_HEIGHT);
         viewport.apply();
         camera.setToOrtho(false);
+
+        assetsManager = new AssetsManager();
+        contactManager = new ContactManager(world);
+        memoryManager = new MemoryManager();
+
         box2DDebugRenderer = new Box2DDebugRenderer();
         setScreen(screenMenu);
     }
@@ -59,6 +66,12 @@ public class CargoGame extends Game {
         screenGame.dispose();
         screenMenu.dispose();
         assetsManager.dispose();
+    }
+
+    @Override
+    public void resize(int width, int height) {
+        screenGame.resize(width, height);
+        screenMenu.resize(width, height);
     }
 
     public Batch batch() {
@@ -77,14 +90,6 @@ public class CargoGame extends Game {
         return viewport;
     }
 
-    public Vector3 getTouch() {
-        return touch;
-    }
-
-    public void setTouch(Vector3 touch) {
-        this.touch = touch;
-    }
-
     public void stepWorld(float delta) {
         world.step(delta, Settings.VELOCITY_ITERATIONS, Settings.POSITION_ITERATIONS);
     }
@@ -99,5 +104,13 @@ public class CargoGame extends Game {
 
     public Screen screenMenu() {
         return screenMenu;
+    }
+
+    public FitViewport uiViewport() {
+        return uiViewport;
+    }
+
+    public MemoryManager memoryManager() {
+        return memoryManager;
     }
 }
