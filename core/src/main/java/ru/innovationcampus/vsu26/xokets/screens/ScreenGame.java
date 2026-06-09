@@ -1,20 +1,13 @@
 package ru.innovationcampus.vsu26.xokets.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Body;
-import com.badlogic.gdx.physics.box2d.BodyDef;
-import com.badlogic.gdx.physics.box2d.Fixture;
-import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.utils.ScreenUtils;
 
 import java.util.ArrayList;
-import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 
 import ru.innovationcampus.vsu26.xokets.CargoGame;
 import ru.innovationcampus.vsu26.xokets.GameSession;
@@ -22,17 +15,16 @@ import ru.innovationcampus.vsu26.xokets.Settings;
 import ru.innovationcampus.vsu26.xokets.Utils;
 import ru.innovationcampus.vsu26.xokets.game_objects.BarrelObject;
 import ru.innovationcampus.vsu26.xokets.game_objects.BulletObject;
-import ru.innovationcampus.vsu26.xokets.game_objects.CarObject;
 import ru.innovationcampus.vsu26.xokets.game_objects.CargoObject;
 import ru.innovationcampus.vsu26.xokets.game_objects.ShootingCarObject;
 import ru.innovationcampus.vsu26.xokets.game_objects.TruckObject;
-import ru.innovationcampus.vsu26.xokets.managers.AssetsManager;
 import ru.innovationcampus.vsu26.xokets.ui.Button;
 import ru.innovationcampus.vsu26.xokets.ui.Image;
 import ru.innovationcampus.vsu26.xokets.ui.MovingBackground;
 import ru.innovationcampus.vsu26.xokets.ui.TextUI;
 
 public class ScreenGame extends MyScreen {
+    private Random rand;
     private final ArrayList<BulletObject> bulletArray = new ArrayList<>();
     private final ArrayList<CargoObject> cargoArray = new ArrayList<>();
     private final ArrayList<BarrelObject> barrelArray = new ArrayList<>();
@@ -48,6 +40,7 @@ public class ScreenGame extends MyScreen {
 
     public ScreenGame(CargoGame cargoGame) {
         super(cargoGame);
+        rand = new Random();
     }
 
     @Override
@@ -141,7 +134,7 @@ public class ScreenGame extends MyScreen {
             "Menu",
             cargoGame.assetsManager().commonWhiteFont()
 
-            );
+        );
 
         pointsTextUI = new TextUI(0, 0, cargoGame.assetsManager().commonWhiteFont(), "points: 0");
         pointsTextUI.setX(pointsTextUI.getWidth() / 2f);
@@ -218,7 +211,7 @@ public class ScreenGame extends MyScreen {
         truck.move(touch);
         truck.updateAnimationStateTime(delta);
         if (!cargoArray.isEmpty()) {
-            if (truck.checkHit()) cargoArray.get(ThreadLocalRandom.current().nextInt(cargoArray.size())).drop();
+            if (truck.checkHit()) cargoArray.get(rand.nextInt(cargoArray.size())).drop();
         } else {
             isGameOver = true;
             uiTouch = null;
@@ -273,7 +266,7 @@ public class ScreenGame extends MyScreen {
 
         if (gameSession.shouldSpawnTrash()) barrelArray.add(new BarrelObject(
 
-            Settings.TRASH_SPAWN_PADDING + ThreadLocalRandom.current().nextFloat(Settings.WORLD_WIDTH - Settings.TRASH_SPAWN_PADDING * 2),
+            Settings.TRASH_SPAWN_PADDING + rand.nextInt((int) (Settings.WORLD_WIDTH - Settings.TRASH_SPAWN_PADDING * 2)),
             Settings.WORLD_HEIGHT,
             Settings.BARREL_WIDTH,
             Settings.BARREL_HEIGHT,
@@ -289,7 +282,8 @@ public class ScreenGame extends MyScreen {
                 cargo.updateAnimationStateTime(delta);
                 continue;
             }
-            if (cargo.isInBody(truck.getBody().getPosition(), truck.getWidth(), truck.getHeight())) continue;
+            if (cargo.isInBody(truck.getBody().getPosition(), truck.getWidth(), truck.getHeight()))
+                continue;
             cargo.setLost(true);
         }
 
