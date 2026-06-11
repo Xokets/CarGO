@@ -41,32 +41,6 @@ public class ScreenGame extends MyScreen {
     public ScreenGame(CargoGame cargoGame) {
         super(cargoGame);
         rand = new Random();
-    }
-
-    @Override
-    public void show() {
-        touch = null;
-        uiTouch = null;
-        point = 0;
-        isGameOver = false;
-
-//        Body leftWall;
-//        Body rightWall;
-//        BodyDef bodyDef = new BodyDef();
-//        bodyDef.fixedRotation = true;
-//        bodyDef.type = BodyDef.BodyType.StaticBody;
-//
-//        leftWall = cargoGame.world().createBody(bodyDef);
-//        rightWall = cargoGame.world().createBody(bodyDef);
-//
-//        FixtureDef fixtureDef = new FixtureDef();
-//        PolygonShape polygonShape = new PolygonShape();
-//        polygonShape.setAsBox(Settings.WORLD_WIDTH / 2f, Settings.WORLD_HEIGHT / 2f);
-//        fixtureDef.shape = polygonShape;
-//        leftWall.createFixture(fixtureDef);
-//        rightWall.createFixture(fixtureDef);
-//        leftWall.setTransform(-Settings.WORLD_WIDTH / 2f, Settings.WORLD_HEIGHT / 2f, 0);
-//        rightWall.setTransform(Settings.WORLD_WIDTH * 1.5f, Settings.WORLD_HEIGHT / 2f, 0);
 
         truck = new TruckObject(
 
@@ -79,21 +53,6 @@ public class ScreenGame extends MyScreen {
             cargoGame.world(),
             Settings.TRUCK_CBITS
         );
-
-        for (int i = 0; i < 4; i++) {
-            cargoArray.add(new CargoObject(
-
-                truck.getX() + i * 0.01f,
-                truck.getY() - truck.getHeight() / 3f,
-                Settings.CARGO_SIZE, Settings.CARGO_SIZE,
-                new PolygonShape(),
-                cargoGame.assetsManager().cargoTexture(),
-                cargoGame.world(),
-                Settings.CARGO_CBITS,
-                cargoGame.assetsManager().cargoLostAnimation()
-
-            ));
-        }
 
         millitaryTruck = new ShootingCarObject(
 
@@ -142,6 +101,29 @@ public class ScreenGame extends MyScreen {
     }
 
     @Override
+    public void show() {
+        touch = null;
+        uiTouch = null;
+        point = 0;
+        isGameOver = false;
+        restartGame();
+        for (int i = 0; i < 4; i++) {
+            cargoArray.add(new CargoObject(
+
+                truck.getX() + i * 0.01f,
+                truck.getY() - truck.getHeight() / 3f,
+                Settings.CARGO_SIZE, Settings.CARGO_SIZE,
+                new PolygonShape(),
+                cargoGame.assetsManager().cargoTexture(),
+                cargoGame.world(),
+                Settings.CARGO_CBITS,
+                cargoGame.assetsManager().cargoLostAnimation()
+
+            ));
+        }
+    }
+
+    @Override
     public void render(float delta) {
         handleInput();
         if (!isGameOver) {
@@ -180,10 +162,6 @@ public class ScreenGame extends MyScreen {
         cargoGame.uiViewport().update(width, height, true);
     }
 
-    @Override
-    public void dispose() {
-    }
-
     private void handleInput() {
         if (Gdx.input.isTouched()) {
             touch = Utils.getCorrectTouch(cargoGame.viewport(), new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0));
@@ -197,7 +175,6 @@ public class ScreenGame extends MyScreen {
             }
 
             if (menuButton.isTouch(uiTouch)) {
-                deleteObjects();
                 cargoGame.memoryManager().addRecord(point);
                 cargoGame.setScreen(cargoGame.screenMenu());
             }
@@ -322,8 +299,11 @@ public class ScreenGame extends MyScreen {
         }
     }
 
-    private void deleteObjects() {
-        cargoGame.world().destroyBody(truck.getBody());
-        if (millitaryTruck != null) cargoGame.world().destroyBody(millitaryTruck.getBody());
+    private void restartGame() {
+        truck.setX(Settings.WORLD_WIDTH / 2f);
+        for (int i = 0; i < barrelArray.size(); i++) {
+            cargoGame.world().destroyBody(barrelArray.get(i).getBody());
+            barrelArray.remove(i--);
+        }
     }
 }

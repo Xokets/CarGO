@@ -18,6 +18,7 @@ public class Settings {
     public static final float MILLITARY_TRUCK_WIDTH = 2.8f;
     public static final float MILLITARY_TRUCK_HEIGHT = 3.3f;
     public static final long MILLITARY_TRUCK_SHOOTING_COOL_DOWN = 1000;
+    public static final float MAX_CAR_LINEAR_VELOCITY = 2.3f;
     public static final float BULLET_SIZE = 0.25f;
     public static final float SCALE = 0.05f;
     public static final float CARGO_SIZE = 0.3f;

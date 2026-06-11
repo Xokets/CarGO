@@ -1,7 +1,6 @@
 package ru.innovationcampus.vsu26.xokets.screens;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.ScreenAdapter;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -20,10 +19,6 @@ public class ScreenMenu extends MyScreen {
 
     public ScreenMenu(CargoGame cargoGame) {
         super(cargoGame);
-    }
-
-    @Override
-    public void show() {
         background = new MovingBackground(cargoGame.assetsManager().roadTexture(), 0);
         startButton = new Button(
 
@@ -44,6 +39,11 @@ public class ScreenMenu extends MyScreen {
             "Best record: " + cargoGame.memoryManager().bestRecord()
 
         );
+    }
+
+    @Override
+    public void show() {
+        bestRecordTextUI.setText("Best record: " + cargoGame.memoryManager().bestRecord());
     }
 
     @Override

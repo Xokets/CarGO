@@ -12,10 +12,6 @@ import com.badlogic.gdx.physics.box2d.World;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-
-import ru.innovationcampus.vsu26.xokets.Settings;
-
 public class TruckObject extends CarObject {
     boolean wasHit = false;
     public TruckObject(float x, float y, float width, float height, PolygonShape shape, @NotNull Texture texture, @NotNull World world, short cBits) {

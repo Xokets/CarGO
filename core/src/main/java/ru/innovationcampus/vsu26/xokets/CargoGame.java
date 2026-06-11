@@ -40,10 +40,8 @@ public class CargoGame extends Game {
 
     @Override
     public void create() {
-        Box2D.init();
-        screenMenu = new ScreenMenu(this);
-        screenGame = new ScreenGame(this);
 
+        Box2D.init();
         world = new World(new Vector2(0, 0), false);
         batch = new SpriteBatch();
         camera = new OrthographicCamera();
@@ -51,12 +49,15 @@ public class CargoGame extends Game {
         uiViewport = new FitViewport(Settings.UI_WORLD_WIDTH, Settings.UI_WORLD_HEIGHT);
         viewport.apply();
         camera.setToOrtho(false);
+        box2DDebugRenderer = new Box2DDebugRenderer();
 
         assetsManager = new AssetsManager();
         contactManager = new ContactManager(world);
         memoryManager = new MemoryManager();
 
-        box2DDebugRenderer = new Box2DDebugRenderer();
+        screenMenu = new ScreenMenu(this);
+        screenGame = new ScreenGame(this);
+
         setScreen(screenMenu);
     }
 

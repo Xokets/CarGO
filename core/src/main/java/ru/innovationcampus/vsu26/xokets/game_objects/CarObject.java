@@ -46,14 +46,21 @@ public class CarObject extends GameObject implements Animated {
     }
 
     public void move(@Nullable Vector3 vector3) {
-        if (vector3 == null) return;
-
-        body.setLinearVelocity(new Vector2((vector3.x - body.getPosition().x) * 8, 0));
+        move(vector3, 8);
     }
     public void move(@Nullable Vector3 vector3, float error) {
         if (vector3 == null) return;
 
-        body.setLinearVelocity(new Vector2((vector3.x - body.getPosition().x) * error, 0));
+        if (vector3.x - body.getPosition().x > Settings.MAX_CAR_LINEAR_VELOCITY) {
+//            System.out.println("max");
+            body.setLinearVelocity(new Vector2((Settings.MAX_CAR_LINEAR_VELOCITY) * error, 0));
+        } else if (vector3.x - body.getPosition().x < -Settings.MAX_CAR_LINEAR_VELOCITY) {
+//            System.out.println("min");
+            body.setLinearVelocity(new Vector2((-Settings.MAX_CAR_LINEAR_VELOCITY) * error, 0));
+        } else {
+            System.out.println("norm");
+            body.setLinearVelocity(new Vector2((vector3.x - body.getPosition().x) * error, 0));
+        }
     }
 
     public void updateAnimationStateTime(float delta) {
